@@ -1,3 +1,9 @@
 spring:
   application:
     name: shareall
+  datasource:
+    generate-unique-name: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
