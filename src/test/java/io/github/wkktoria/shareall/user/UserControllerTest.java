@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -37,8 +38,7 @@ class UserControllerTest {
     void postUser_whenUserIsValid_receiveOk() {
         User user = createValidUser();
 
-        ResponseEntity<User> response = testRestTemplate
-                .postForEntity(API_1_0_USERS, user, User.class);
+        ResponseEntity<User> response = postSignup(user, User.class);
 
         assertThat(response.getStatusCode())
                 .isEqualTo(HttpStatus.OK);
@@ -48,7 +48,7 @@ class UserControllerTest {
     void postUser_whenUserIsValid_userSavedToDatabase() {
         User user = createValidUser();
 
-        testRestTemplate.postForEntity(API_1_0_USERS, user, User.class);
+        postSignup(user, User.class);
 
         assertThat(userRepository.count()).isEqualTo(1);
     }
@@ -57,21 +57,24 @@ class UserControllerTest {
     void postUser_whenUserIsValid_receiveSuccessMessage() {
         User user = createValidUser();
 
-        ResponseEntity<GenericResponse> response = testRestTemplate
-                .postForEntity(API_1_0_USERS, user, GenericResponse.class);
+        ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
 
-        assertThat(response.getBody().getMessage()).isNotNull();
+        assertThat(Objects.requireNonNull(response.getBody()).getMessage()).isNotNull();
     }
 
     @Test
     void postUser_whenUserIsValid_passwordIsHashedInDatabase() {
         User user = createValidUser();
 
-        testRestTemplate.postForEntity(API_1_0_USERS, user, User.class);
+        postSignup(user, User.class);
         List<User> users = userRepository.findAll();
-        User inDbUser = users.get(0);
+        User inDbUser = users.getFirst();
 
         assertThat(inDbUser.getPassword()).isNotEqualTo(user.getPassword());
+    }
+
+    public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
+        return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
     }
 
     private User createValidUser() {
