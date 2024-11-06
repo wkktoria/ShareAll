@@ -22,7 +22,7 @@ class User {
     @GeneratedValue
     private Long id;
 
-    @NotNull
+    @NotNull(message = "{shareall.constraints.username.NotNull.message}")
     @Size(min = 4, max = 255)
     private String username;
 
@@ -32,6 +32,6 @@ class User {
 
     @NotNull
     @Size(min = 8, max = 255)
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$", message = "{shareall.constraints.password.Pattern.message}")
     private String password;
 }
