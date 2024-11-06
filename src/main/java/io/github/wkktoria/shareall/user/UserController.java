@@ -1,6 +1,7 @@
 package io.github.wkktoria.shareall.user;
 
 import io.github.wkktoria.shareall.shared.GenericResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +15,7 @@ class UserController {
     }
 
     @PostMapping("/api/1.0/users")
-    GenericResponse createUser(@RequestBody final User user) {
+    GenericResponse createUser(@Valid @RequestBody final User user) {
         userService.save(user);
         return new GenericResponse("User saved successfully");
     }
