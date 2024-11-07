@@ -262,7 +262,7 @@ class UserControllerTest {
         Map<String, String> validationErrors = Objects.requireNonNull(response.getBody()).getValidationErrors();
 
         assertThat(validationErrors.get("password"))
-                .isEqualTo("Password must have at least one uppercase, one lowercase and one number");
+                .isEqualTo("Password must have at least one uppercase, one lowercase, one number and one special character");
     }
 
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
