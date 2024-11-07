@@ -14,18 +14,25 @@ export class UserSignupPage extends React.Component {
 
   onChangeDisplayName = (event) => {
     const value = event.target.value;
-    this.setState({ displayName: value });
+    const errors = { ...this.state.errors };
+    delete errors.displayName;
+
+    this.setState({ displayName: value, errors });
   };
 
   onChangeUsername = (event) => {
     const value = event.target.value;
-    this.setState({ username: value });
+    const errors = { ...this.state.errors };
+    delete errors.username;
+
+    this.setState({ username: value, errors });
   };
 
   onChangePassword = (event) => {
     const value = event.target.value;
     const passwordRepeatConfirmed = this.state.passwordRepeat === value;
     const errors = { ...this.state.errors };
+    delete errors.password;
     errors.passwordRepeat = passwordRepeatConfirmed
       ? ""
       : "Does not match the password";
