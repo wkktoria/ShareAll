@@ -3,7 +3,6 @@ package io.github.wkktoria.shareall.user;
 import io.github.wkktoria.shareall.error.ApiError;
 import io.github.wkktoria.shareall.shared.GenericResponse;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,6 @@ class UserControllerTest {
         userRepository.deleteAll();
     }
 
-    @Disabled("There is problem with validation, probably related to: https://stackoverflow.com/a/6343215")
     @Test
     void postUser_whenUserIsValid_receiveOk() {
         User user = createValidUser();
@@ -51,7 +49,6 @@ class UserControllerTest {
 
     }
 
-    @Disabled("There is problem with validation, probably related to: https://stackoverflow.com/a/6343215")
     @Test
     void postUser_whenUserIsValid_userSavedToDatabase() {
         User user = createValidUser();
@@ -61,7 +58,6 @@ class UserControllerTest {
         assertThat(userRepository.count()).isEqualTo(1);
     }
 
-    @Disabled("There is problem with validation, probably related to: https://stackoverflow.com/a/6343215")
     @Test
     void postUser_whenUserIsValid_receiveSuccessMessage() {
         User user = createValidUser();
@@ -71,7 +67,6 @@ class UserControllerTest {
         assertThat(Objects.requireNonNull(response.getBody()).getMessage()).isNotNull();
     }
 
-    @Disabled("There is problem with validation, probably related to: https://stackoverflow.com/a/6343215")
     @Test
     void postUser_whenUserIsValid_passwordIsHashedInDatabase() {
         User user = createValidUser();
@@ -278,7 +273,7 @@ class UserControllerTest {
         User user = new User();
         user.setUsername("test-user");
         user.setDisplayName("test-display");
-        user.setPassword("P4sW0ord");
+        user.setPassword("P4sW@ord");
 
         return user;
     }
