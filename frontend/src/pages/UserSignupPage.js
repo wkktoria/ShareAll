@@ -9,6 +9,7 @@ export class UserSignupPage extends React.Component {
     passwordRepeat: "",
     pendingApiCall: false,
     errors: {},
+    passwordRepeatConfirmed: true,
   };
 
   onChangeDisplayName = (event) => {
@@ -23,12 +24,24 @@ export class UserSignupPage extends React.Component {
 
   onChangePassword = (event) => {
     const value = event.target.value;
-    this.setState({ password: value });
+    const passwordRepeatConfirmed = this.state.passwordRepeat === value;
+    const errors = { ...this.state.errors };
+    errors.passwordRepeat = passwordRepeatConfirmed
+      ? ""
+      : "Does not match the password";
+
+    this.setState({ password: value, passwordRepeatConfirmed, errors });
   };
 
   onChangePasswordRepeat = (event) => {
     const value = event.target.value;
-    this.setState({ passwordRepeat: value });
+    const passwordRepeatConfirmed = this.state.password === value;
+    const errors = { ...this.state.errors };
+    errors.passwordRepeat = passwordRepeatConfirmed
+      ? ""
+      : "Does not match the password";
+
+    this.setState({ passwordRepeat: value, passwordRepeatConfirmed, errors });
   };
 
   onClickSignup = () => {
@@ -107,7 +120,9 @@ export class UserSignupPage extends React.Component {
           <button
             className="btn btn-primary"
             onClick={this.onClickSignup}
-            disabled={this.state.pendingApiCall}
+            disabled={
+              this.state.pendingApiCall || !this.state.passwordRepeatConfirmed
+            }
           >
             {this.state.pendingApiCall && (
               <div className="spinner-border spinner-border-sm" role="status">

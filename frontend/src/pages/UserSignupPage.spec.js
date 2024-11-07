@@ -232,6 +232,37 @@ describe("UserSignupPage", () => {
         expect(errorMessage).toBeInTheDocument();
       });
     });
+
+    it("enables the signup button when password and repeat password have the same value", () => {
+      setupForSubmit();
+      expect(button).not.toBeDisabled();
+    });
+
+    it("disables the signup button when password repeat does not match the password", () => {
+      setupForSubmit();
+      fireEvent.change(passwordRepeatInput, changeEvent("new-pass"));
+      expect(button).toBeDisabled();
+    });
+
+    it("disables the signup button when password does not match the password repeat", () => {
+      setupForSubmit();
+      fireEvent.change(passwordInput, changeEvent("new-pass"));
+      expect(button).toBeDisabled();
+    });
+
+    it("displays error style for password repeat input when password input repeat mismatch", () => {
+      const { queryByText } = setupForSubmit();
+      fireEvent.change(passwordRepeatInput, changeEvent("new-pass"));
+      const mismatchWarning = queryByText("Does not match the password");
+      expect(mismatchWarning).toBeInTheDocument();
+    });
+
+    it("displays error style for password repeat input when password input mismatch", () => {
+      const { queryByText } = setupForSubmit();
+      fireEvent.change(passwordInput, changeEvent("new-pass"));
+      const mismatchWarning = queryByText("Does not match the password");
+      expect(mismatchWarning).toBeInTheDocument();
+    });
   });
 });
 
