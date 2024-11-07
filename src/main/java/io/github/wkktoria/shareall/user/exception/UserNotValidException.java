@@ -1,8 +1,8 @@
-package io.github.wkktoria.shareall.user;
+package io.github.wkktoria.shareall.user.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-class UserNotValidException extends RuntimeException {
+public class UserNotValidException extends RuntimeException {
 }

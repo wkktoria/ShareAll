@@ -1,5 +1,6 @@
 package io.github.wkktoria.shareall.user;
 
+import io.github.wkktoria.shareall.user.annotation.UniqueUsername;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,13 +18,14 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-class User {
+public class User {
     @Id
     @GeneratedValue
     private Long id;
 
     @NotNull(message = "{shareall.constraints.username.NotNull.message}")
     @Size(min = 4, max = 255)
+    @UniqueUsername
     private String username;
 
     @NotNull
