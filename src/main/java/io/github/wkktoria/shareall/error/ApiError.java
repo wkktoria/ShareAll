@@ -1,5 +1,6 @@
 package io.github.wkktoria.shareall.error;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiError {
     private long timestamp = new Date().getTime();
 

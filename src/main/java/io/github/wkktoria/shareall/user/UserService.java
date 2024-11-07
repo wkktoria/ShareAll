@@ -1,16 +1,16 @@
 package io.github.wkktoria.shareall.user;
 
 import io.github.wkktoria.shareall.user.exception.DuplicateUsernameException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 class UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     UserService(final UserRepository userRepository,
-                final BCryptPasswordEncoder passwordEncoder) {
+                final PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
