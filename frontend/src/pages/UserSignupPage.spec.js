@@ -1,8 +1,5 @@
-import { render, cleanup, fireEvent, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { UserSignupPage } from "./UserSignupPage";
-
-beforeEach(cleanup);
 
 describe("UserSignupPage", () => {
   describe("Layout", () => {
@@ -181,7 +178,7 @@ describe("UserSignupPage", () => {
       expect(spinner).toBeInTheDocument();
     });
 
-    it("hide spinner after api call finishes successfully", async () => {
+    it("hides spinner after api call finishes successfully", async () => {
       const actions = {
         postSignup: mockAsyncDelayed(),
       };
@@ -194,7 +191,7 @@ describe("UserSignupPage", () => {
       });
     });
 
-    it("hide spinner after api call finishes with error", async () => {
+    it("hides spinner after api call finishes with error", async () => {
       const actions = {
         postSignup: jest.fn().mockImplementation(() => {
           return new Promise((resolve, reject) => {
@@ -212,6 +209,27 @@ describe("UserSignupPage", () => {
       await waitFor(() => {
         const spinner = queryByText("Loading...");
         expect(spinner).not.toBeInTheDocument();
+      });
+    });
+
+    it("displays validation error for displayName when error is received for the field", async () => {
+      const actions = {
+        postSignup: jest.fn().mockRejectedValue({
+          response: {
+            data: {
+              validationErrors: {
+                displayName: "Cannot be null",
+              },
+            },
+          },
+        }),
+      };
+      const { queryByText } = setupForSubmit({ actions });
+      fireEvent.click(button);
+
+      await waitFor(() => {
+        const errorMessage = queryByText("Cannot be null");
+        expect(errorMessage).toBeInTheDocument();
       });
     });
   });
