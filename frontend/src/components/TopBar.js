@@ -1,0 +1,34 @@
+import React from "react";
+import logo from "../assets/shareall-logo.svg";
+import { Link } from "react-router-dom";
+
+export class TopBar extends React.Component {
+  render() {
+    return (
+      <div className="bg-white shadow-sm mb-2">
+        <div className="container">
+          <nav className="navbar navbar-light navbar-expand">
+            <Link to="/" className="navbar-brand">
+              <img src={logo} width="64" alt="ShareAll" className="me-2" />
+              ShareAll
+            </Link>
+            <ul className="nav navbar-nav ms-auto">
+              <li className="nav-item">
+                <Link to="/signup" className="nav-link">
+                  Sign Up
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/login" className="nav-link">
+                  Login
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default TopBar;
