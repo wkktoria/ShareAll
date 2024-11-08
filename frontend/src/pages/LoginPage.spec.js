@@ -1,5 +1,10 @@
 import React from "react";
-import { fireEvent, render, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import { LoginPage } from "./LoginPage";
 
 describe("LoginPage", () => {
@@ -116,7 +121,7 @@ describe("LoginPage", () => {
       expect(button).not.toBeDisabled();
     });
 
-    it("disables the button then username is empty", () => {
+    it("disables the button when username is empty", () => {
       setupForSubmit();
       fireEvent.change(usernameInput, changeEvent(""));
       expect(button).toBeDisabled();
@@ -236,6 +241,20 @@ describe("LoginPage", () => {
         const spinner = queryByText("Loading...");
         expect(spinner).not.toBeInTheDocument();
       });
+    });
+
+    it("redirects to homepage after successful login", async () => {
+      const actions = {
+        postLogin: jest.fn().mockResolvedValue({}),
+      };
+      const history = {
+        push: jest.fn(),
+      };
+      const { queryByText } = setupForSubmit({ actions, history });
+      fireEvent.click(button);
+
+      await waitForElementToBeRemoved(() => queryByText("Loading..."));
+      expect(history.push).toHaveBeenCalledWith("/");
     });
   });
 });
