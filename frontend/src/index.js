@@ -3,8 +3,9 @@ import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
 import App from "./containers/App";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import authReducer from "./redux/authReducer";
+import logger from "redux-logger";
 import reportWebVitals from "./reportWebVitals";
 
 const loggedInState = {
@@ -16,7 +17,7 @@ const loggedInState = {
   isLoggedIn: true,
 };
 
-const store = createStore(authReducer, loggedInState);
+const store = createStore(authReducer, loggedInState, applyMiddleware(logger));
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
