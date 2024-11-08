@@ -8,6 +8,7 @@ import * as apiCalls from "../api/apiCalls";
 
 const actions = {
   postLogin: apiCalls.login,
+  postSignup: apiCalls.signup,
 };
 
 export function App() {
@@ -20,7 +21,12 @@ export function App() {
             path="/login"
             component={(props) => <LoginPage {...props} actions={actions} />}
           />
-          <Route path="/signup" component={UserSignupPage} />
+          <Route
+            path="/signup"
+            component={(props) => (
+              <UserSignupPage {...props} actions={actions} />
+            )}
+          />
           <Route path="/:username" component={UserPage} />
         </Switch>
       </div>

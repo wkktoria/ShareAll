@@ -1,4 +1,9 @@
-import { fireEvent, render, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import { UserSignupPage } from "./UserSignupPage";
 
 describe("UserSignupPage", () => {
@@ -337,6 +342,20 @@ describe("UserSignupPage", () => {
 
       const errorMessage = queryByText("Cannot be null");
       expect(errorMessage).not.toBeInTheDocument();
+    });
+
+    it("redirects to homepage after successful signup", async () => {
+      const actions = {
+        postSignup: jest.fn().mockResolvedValue({}),
+      };
+      const history = {
+        push: jest.fn(),
+      };
+      const { queryByText } = setupForSubmit({ actions, history });
+      fireEvent.click(button);
+
+      await waitForElementToBeRemoved(() => queryByText("Loading..."));
+      expect(history.push).toHaveBeenCalledWith("/");
     });
   });
 });
