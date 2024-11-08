@@ -1,8 +1,9 @@
 import React from "react";
 import Input from "../components/Input";
 import ButtonWithProgress from "../components/ButtonWithProgress";
+import { connect } from "react-redux";
 
-class LoginPage extends React.Component {
+export class LoginPage extends React.Component {
   state = {
     username: "",
     password: "",
@@ -29,6 +30,15 @@ class LoginPage extends React.Component {
     this.props.actions
       .postLogin(body)
       .then((response) => {
+        const action = {
+          type: "login-success",
+          payload: {
+            ...response.data,
+            password: this.state.password,
+          },
+        };
+        this.props.dispatch(action);
+
         this.setState({ pendingApiCall: false }, () => {
           this.props.history.push("/");
         });
@@ -101,6 +111,7 @@ LoginPage.defaultProps = {
   history: {
     push: () => {},
   },
+  dispatch: () => {},
 };
 
-export default LoginPage;
+export default connect()(LoginPage);

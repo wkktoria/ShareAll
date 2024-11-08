@@ -1,3 +1,5 @@
+import { act } from "react";
+
 const initialState = {
   id: 0,
   username: "",
@@ -10,6 +12,13 @@ const initialState = {
 export default function authReducer(state = initialState, action) {
   if (action.type === "logout-success") {
     return { ...initialState };
+  }
+
+  if (action.type === "login-success") {
+    return {
+      ...action.payload,
+      isLoggedIn: true,
+    };
   }
 
   return state;
