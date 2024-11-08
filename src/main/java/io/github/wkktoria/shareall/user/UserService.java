@@ -5,17 +5,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-class UserService {
+public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    UserService(final UserRepository userRepository,
-                final PasswordEncoder passwordEncoder) {
+    public UserService(final UserRepository userRepository,
+                       final PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    User save(final User user) {
+    public User save(final User user) {
         User inDbUser = userRepository.findByUsername(user.getUsername());
 
         if (inDbUser != null) {

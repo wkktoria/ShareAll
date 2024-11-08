@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static io.github.wkktoria.shareall.TestUtil.createValidUser;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExtendWith(SpringExtension.class)
@@ -22,12 +23,7 @@ class UserRepositoryTest {
 
     @Test
     void findByUsername_whenUserExists_returnUser() {
-        User user = new User();
-        user.setUsername("test-user");
-        user.setDisplayName("test-display");
-        user.setPassword("P4sW@ord");
-
-        testEntityManager.persist(user);
+        testEntityManager.persist(createValidUser());
 
         User inDbUser = userRepository.findByUsername("test-user");
 
