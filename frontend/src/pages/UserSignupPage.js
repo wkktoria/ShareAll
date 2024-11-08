@@ -1,8 +1,9 @@
 import React from "react";
 import Input from "../components/Input";
 import ButtonWithProgress from "../components/ButtonWithProgress";
+import { connect } from "react-redux";
 
-class UserSignupPage extends React.Component {
+export class UserSignupPage extends React.Component {
   state = {
     displayName: "",
     username: "",
@@ -62,8 +63,23 @@ class UserSignupPage extends React.Component {
     this.props.actions
       .postSignup(user)
       .then((_) => {
-        this.setState({ pendingApiCall: false }, () => {
-          this.props.history.push("/");
+        const body = {
+          username: this.state.username,
+          password: this.state.password,
+        };
+        this.setState({ pendingApiCall: true });
+        this.props.actions.postLogin(body).then((response) => {
+          const action = {
+            type: "login-success",
+            payload: {
+              ...response.data,
+              password: this.state.password,
+            },
+          };
+          this.props.dispatch(action);
+          this.setState({ pendingApiCall: false }, () => {
+            this.props.history.push("/");
+          });
         });
       })
       .catch((apiError) => {
@@ -150,4 +166,4 @@ UserSignupPage.defaultProps = {
   },
 };
 
-export default UserSignupPage;
+export default connect()(UserSignupPage);
