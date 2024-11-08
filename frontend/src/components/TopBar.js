@@ -3,7 +3,7 @@ import logo from "../assets/shareall-logo.svg";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 
-export class TopBar extends React.Component {
+class TopBar extends React.Component {
   render() {
     let links = (
       <ul className="nav navbar-nav ms-auto">

@@ -2,7 +2,7 @@ import React from "react";
 import Input from "../components/Input";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 
-export class UserSignupPage extends React.Component {
+class UserSignupPage extends React.Component {
   state = {
     displayName: "",
     username: "",

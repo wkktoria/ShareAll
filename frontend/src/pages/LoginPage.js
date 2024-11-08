@@ -2,7 +2,7 @@ import React from "react";
 import Input from "../components/Input";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 
-export class LoginPage extends React.Component {
+class LoginPage extends React.Component {
   state = {
     username: "",
     password: "",
