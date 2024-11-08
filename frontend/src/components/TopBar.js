@@ -1,9 +1,38 @@
 import React from "react";
 import logo from "../assets/shareall-logo.svg";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 export class TopBar extends React.Component {
   render() {
+    let links = (
+      <ul className="nav navbar-nav ms-auto">
+        <li className="nav-item">
+          <Link to="/signup" className="nav-link">
+            Sign Up
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link to="/login" className="nav-link">
+            Login
+          </Link>
+        </li>
+      </ul>
+    );
+
+    if (this.props.user.isLoggedIn) {
+      links = (
+        <ul className="nav navbar-nav ms-auto">
+          <li className="nav-item nav-link">Logout</li>
+          <li className="nav-item">
+            <Link className="nav-link" to={`/${this.props.user.username}`}>
+              My Profile
+            </Link>
+          </li>
+        </ul>
+      );
+    }
+
     return (
       <div className="bg-white shadow-sm mb-2">
         <div className="container">
@@ -12,18 +41,7 @@ export class TopBar extends React.Component {
               <img src={logo} width="64" alt="ShareAll" className="me-2" />
               ShareAll
             </Link>
-            <ul className="nav navbar-nav ms-auto">
-              <li className="nav-item">
-                <Link to="/signup" className="nav-link">
-                  Sign Up
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/login" className="nav-link">
-                  Login
-                </Link>
-              </li>
-            </ul>
+            {links}
           </nav>
         </div>
       </div>
@@ -31,4 +49,10 @@ export class TopBar extends React.Component {
   }
 }
 
-export default TopBar;
+const mapStateToProps = (state) => {
+  return {
+    user: state,
+  };
+};
+
+export default connect(mapStateToProps)(TopBar);
