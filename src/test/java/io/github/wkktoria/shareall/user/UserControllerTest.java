@@ -312,6 +312,15 @@ class UserControllerTest {
         assertThat(Objects.requireNonNull(response.getBody()).getNumberOfElements()).isEqualTo(1);
     }
 
+    @Test
+    void getUsers_whenThereIsUserInDb_receiveUserWithoutPassword() {
+        userRepository.save(createValidUser());
+        ResponseEntity<TestPage<Map<String, Object>>> response = getUsers(new ParameterizedTypeReference<>() {
+        });
+        Map<String, Object> entity = Objects.requireNonNull(response.getBody()).getContent().getFirst();
+        assertThat(entity.containsKey("password")).isFalse();
+    }
+
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
         return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
     }
