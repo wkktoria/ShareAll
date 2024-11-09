@@ -1,9 +1,8 @@
 package io.github.wkktoria.shareall.user;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import io.github.wkktoria.shareall.error.ApiError;
 import io.github.wkktoria.shareall.shared.GenericResponse;
-import io.github.wkktoria.shareall.user.views.Views;
+import io.github.wkktoria.shareall.user.viewmodel.UserViewModel;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -32,9 +31,8 @@ class UserController {
     }
 
     @GetMapping("/users")
-    @JsonView(Views.Base.class)
-    Page<?> getUsers() {
-        return userService.getUsers();
+    Page<UserViewModel> getUsers() {
+        return userService.getUsers().map(UserViewModel::new);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

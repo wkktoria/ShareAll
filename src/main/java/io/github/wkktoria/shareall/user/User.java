@@ -1,8 +1,6 @@
 package io.github.wkktoria.shareall.user;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import io.github.wkktoria.shareall.user.annotation.UniqueUsername;
-import io.github.wkktoria.shareall.user.views.Views;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -25,18 +23,15 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue
-    @JsonView(Views.Base.class)
     private Long id;
 
     @NotNull(message = "{shareall.constraints.username.NotNull.message}")
     @Size(min = 4, max = 255)
     @UniqueUsername
-    @JsonView(Views.Base.class)
     private String username;
 
     @NotNull
     @Size(min = 4, max = 255)
-    @JsonView(Views.Base.class)
     private String displayName;
 
     @NotNull
@@ -45,7 +40,6 @@ public class User implements UserDetails {
             message = "{shareall.constraints.password.Pattern.message}")
     private String password;
 
-    @JsonView(Views.Base.class)
     private String image;
 
     @Override
