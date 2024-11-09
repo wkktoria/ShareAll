@@ -6,6 +6,10 @@ import { Provider } from "react-redux";
 import configureStore from "../redux/configureStore";
 import axios from "axios";
 
+beforeEach(() => {
+  localStorage.clear();
+});
+
 const setup = (path) => {
   const store = configureStore(false);
   return render(
@@ -157,5 +161,53 @@ describe("App", () => {
       const myProfileLink = queryByText("My Profile");
       expect(myProfileLink).toBeInTheDocument();
     });
+  });
+
+  it("saves logged in use data to local storage after login success", async () => {
+    const { queryByPlaceholderText, container, queryByText } = setup("/login");
+    const usernameInput = queryByPlaceholderText("Your username");
+    fireEvent.change(usernameInput, changeEvent("user1"));
+    const passwordInput = queryByPlaceholderText("Your password");
+    fireEvent.change(passwordInput, changeEvent("P4@sSw0rd"));
+    const button = container.querySelector("button");
+    axios.post = jest.fn().mockResolvedValue({
+      data: {
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+      },
+    });
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      queryByText("My Profile");
+      const dataInStorage = JSON.parse(localStorage.getItem("shareall-auth"));
+      expect(dataInStorage).toEqual({
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+        password: "P4@sSw0rd",
+        isLoggedIn: true,
+      });
+    });
+  });
+
+  it("displays logged in TopBar when storage has logged in user data", () => {
+    localStorage.setItem(
+      "shareall-auth",
+      JSON.stringify({
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+        password: "P4@sSw0rd",
+        isLoggedIn: true,
+      })
+    );
+    const { queryByText } = setup("/");
+    const myProfileLink = queryByText("My Profile");
+    expect(myProfileLink).toBeInTheDocument();
   });
 });
