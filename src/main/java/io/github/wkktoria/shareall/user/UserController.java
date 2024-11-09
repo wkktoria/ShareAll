@@ -4,6 +4,7 @@ import io.github.wkktoria.shareall.error.ApiError;
 import io.github.wkktoria.shareall.shared.GenericResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/1.0")
 class UserController {
     private final UserService userService;
 
@@ -21,10 +23,15 @@ class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/api/1.0/users")
+    @PostMapping("/users")
     GenericResponse createUser(@Valid @RequestBody final User user) {
         userService.save(user);
         return new GenericResponse("User saved successfully");
+    }
+
+    @GetMapping("/users")
+    Page<?> getUsers() {
+        return userService.getUsers();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
