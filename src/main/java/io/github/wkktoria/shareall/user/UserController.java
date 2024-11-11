@@ -1,6 +1,7 @@
 package io.github.wkktoria.shareall.user;
 
 import io.github.wkktoria.shareall.error.ApiError;
+import io.github.wkktoria.shareall.shared.CurrentUser;
 import io.github.wkktoria.shareall.shared.GenericResponse;
 import io.github.wkktoria.shareall.user.viewmodel.UserViewModel;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,8 +33,8 @@ class UserController {
     }
 
     @GetMapping("/users")
-    Page<UserViewModel> getUsers(final Pageable pageable) {
-        return userService.getUsers(pageable).map(UserViewModel::new);
+    Page<UserViewModel> getUsers(@CurrentUser User loggedInUser, final Pageable pageable) {
+        return userService.getUsers(loggedInUser, pageable).map(UserViewModel::new);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

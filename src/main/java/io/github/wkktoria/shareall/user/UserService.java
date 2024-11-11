@@ -28,7 +28,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Page<User> getUsers(final Pageable pageable) {
+    public Page<User> getUsers(User loggedInUser, final Pageable pageable) {
+        if (loggedInUser != null) {
+            return userRepository.findByUsernameNot(loggedInUser.getUsername(), pageable);
+        }
         return userRepository.findAll(pageable);
     }
 }
