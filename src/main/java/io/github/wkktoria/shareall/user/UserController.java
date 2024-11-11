@@ -6,6 +6,7 @@ import io.github.wkktoria.shareall.user.viewmodel.UserViewModel;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -31,8 +32,8 @@ class UserController {
     }
 
     @GetMapping("/users")
-    Page<UserViewModel> getUsers() {
-        return userService.getUsers().map(UserViewModel::new);
+    Page<UserViewModel> getUsers(final Pageable pageable) {
+        return userService.getUsers(pageable).map(UserViewModel::new);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

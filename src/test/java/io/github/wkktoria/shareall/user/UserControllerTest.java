@@ -1,6 +1,7 @@
 package io.github.wkktoria.shareall.user;
 
 import io.github.wkktoria.shareall.TestPage;
+import io.github.wkktoria.shareall.TestUtil;
 import io.github.wkktoria.shareall.error.ApiError;
 import io.github.wkktoria.shareall.shared.GenericResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -321,11 +322,57 @@ class UserControllerTest {
         assertThat(entity.containsKey("password")).isFalse();
     }
 
+    @Test
+    void getUsers_whenPageIsRequestedForThreeItemsPerPageWhereDatabaseHasTwentyUsers_receiveThreeUsers() {
+        IntStream.rangeClosed(1, 20).mapToObj(i -> "test-user-" + i)
+                .map(TestUtil::createValidUser)
+                .forEach(userRepository::save);
+        String path = API_1_0_USERS + "?page=0&size=3";
+        ResponseEntity<TestPage<Object>> response = getUsers(path, new ParameterizedTypeReference<>() {
+        });
+        assertThat(Objects.requireNonNull(response.getBody()).getContent().size()).isEqualTo(3);
+    }
+
+    @Test
+    void getUsers_whenPageSizeNotProvided_receivePageSizeAsTen() {
+        ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<>() {
+        });
+        assertThat(Objects.requireNonNull(response.getBody()).getSize()).isEqualTo(10);
+    }
+
+    @Test
+    void getUsers_whenPageSizeIsGreaterThanHundred_receivePageSizeAsHundred() {
+        final String path = API_1_0_USERS + "?size=500";
+        ResponseEntity<TestPage<Object>> response = getUsers(path, new ParameterizedTypeReference<>() {
+        });
+        assertThat(Objects.requireNonNull(response.getBody()).getSize()).isEqualTo(100);
+    }
+
+    @Test
+    void getUsers_whenPageSizeIsNegative_receivePageSizeAsTen() {
+        final String path = API_1_0_USERS + "?size=-1";
+        ResponseEntity<TestPage<Object>> response = getUsers(path, new ParameterizedTypeReference<>() {
+        });
+        assertThat(Objects.requireNonNull(response.getBody()).getSize()).isEqualTo(10);
+    }
+
+    @Test
+    void getUsers_whenPageIsNegative_receiveFirstPage() {
+        final String path = API_1_0_USERS + "?page=-1";
+        ResponseEntity<TestPage<Object>> response = getUsers(path, new ParameterizedTypeReference<>() {
+        });
+        assertThat(Objects.requireNonNull(response.getBody()).getNumber()).isEqualTo(0);
+    }
+
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
         return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
     }
 
     public <T> ResponseEntity<T> getUsers(ParameterizedTypeReference<T> responseType) {
         return testRestTemplate.exchange(API_1_0_USERS, HttpMethod.GET, null, responseType);
+    }
+
+    public <T> ResponseEntity<T> getUsers(final String path, ParameterizedTypeReference<T> responseType) {
+        return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);
     }
 }

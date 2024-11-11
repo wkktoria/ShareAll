@@ -2,7 +2,6 @@ package io.github.wkktoria.shareall.user;
 
 import io.github.wkktoria.shareall.user.exception.DuplicateUsernameException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Page<User> getUsers() {
-        Pageable pageable = PageRequest.of(0, 10);
+    public Page<User> getUsers(final Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 }
