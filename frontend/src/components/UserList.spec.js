@@ -2,6 +2,7 @@ import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import UserList from "./UserList";
 import * as apiCalls from "../api/apiCalls";
+import { MemoryRouter } from "react-router-dom";
 
 apiCalls.listUsers = jest.fn().mockResolvedValue({
   data: {
@@ -12,7 +13,11 @@ apiCalls.listUsers = jest.fn().mockResolvedValue({
 });
 
 const setup = () => {
-  return render(<UserList />);
+  return render(
+    <MemoryRouter>
+      <UserList />
+    </MemoryRouter>
+  );
 };
 
 const mockedEmptySuccessResponse = {
@@ -164,6 +169,16 @@ describe("UserList", () => {
       const { findByText } = setup();
       const previousLink = await findByText("< previous");
       expect(previousLink).not.toBeInTheDocument();
+    });
+
+    it("has link to UserPage", async () => {
+      apiCalls.listUsers = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetMultiPageFirst);
+      const { findByText, container } = setup();
+      await findByText("display1@user1");
+      const firstAnchor = container.querySelectorAll("a")[0];
+      expect(firstAnchor.getAttribute("href")).toBe("/user1");
     });
   });
 
