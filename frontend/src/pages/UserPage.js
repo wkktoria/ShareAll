@@ -7,12 +7,14 @@ class UserPage extends React.Component {
     userNotFound: false,
   };
 
-  componentDidMount() {
+  loadUser = () => {
     const username = this.props.match.params.username;
 
     if (!username) {
       return;
     }
+
+    this.setState({ userNotFound: false });
 
     apiCalls
       .getUser(username)
@@ -22,6 +24,16 @@ class UserPage extends React.Component {
       .catch((_) => {
         this.setState({ userNotFound: true });
       });
+  };
+
+  componentDidMount() {
+    this.loadUser();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.username !== this.props.match.params.username) {
+      this.loadUser();
+    }
   }
 
   render() {
