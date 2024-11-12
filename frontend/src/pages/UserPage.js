@@ -4,6 +4,7 @@ import * as apiCalls from "../api/apiCalls";
 class UserPage extends React.Component {
   state = {
     user: undefined,
+    userNotFound: false,
   };
 
   componentDidMount() {
@@ -13,12 +14,28 @@ class UserPage extends React.Component {
       return;
     }
 
-    apiCalls.getUser(username).then((response) => {
-      this.setState({ user: response.data });
-    });
+    apiCalls
+      .getUser(username)
+      .then((response) => {
+        this.setState({ user: response.data });
+      })
+      .catch((_) => {
+        this.setState({ userNotFound: true });
+      });
   }
 
   render() {
+    if (this.state.userNotFound) {
+      return (
+        <div className="alert alert-danger text-center" role="alert">
+          <div className="alert-heading">
+            <i className="fa-solid fa-triangle-exclamation fa-3x"></i>
+          </div>
+          <h5>User not found</h5>
+        </div>
+      );
+    }
+
     return (
       <div data-testid="userpage">
         {this.state.user && (
