@@ -1,5 +1,6 @@
 package io.github.wkktoria.shareall.user;
 
+import io.github.wkktoria.shareall.error.NotFoundException;
 import io.github.wkktoria.shareall.user.exception.DuplicateUsernameException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,5 +34,13 @@ public class UserService {
             return userRepository.findByUsernameNot(loggedInUser.getUsername(), pageable);
         }
         return userRepository.findAll(pageable);
+    }
+
+    public User getByUsername(final String username) {
+        User inDbUser = userRepository.findByUsername(username);
+        if (inDbUser == null) {
+            throw new NotFoundException(username + " not found");
+        }
+        return inDbUser;
     }
 }

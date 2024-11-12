@@ -37,6 +37,12 @@ class UserController {
         return userService.getUsers(loggedInUser, pageable).map(UserViewModel::new);
     }
 
+    @GetMapping("/users/{username}")
+    UserViewModel getUserByUsername(@PathVariable final String username) {
+        User user = userService.getByUsername(username);
+        return new UserViewModel(user);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ApiError handleValidationException(MethodArgumentNotValidException exception,
