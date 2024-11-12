@@ -229,7 +229,7 @@ describe("UserList", () => {
         .mockRejectedValueOnce(mockFailGet)
         .mockResolvedValueOnce(mockSuccessGetMultiPageFirst);
       const { findByText } = setup();
-      const previousLink = queryByText("< previous");
+      const previousLink = await findByText("< previous");
       fireEvent.click(previousLink);
       await findByText("User load failed");
       fireEvent.click(previousLink);
