@@ -6,6 +6,7 @@ class UserPage extends React.Component {
   state = {
     user: undefined,
     userNotFound: false,
+    isLoadingUser: false,
   };
 
   loadUser = () => {
@@ -15,15 +16,15 @@ class UserPage extends React.Component {
       return;
     }
 
-    this.setState({ userNotFound: false });
+    this.setState({ userNotFound: false, isLoadingUser: true });
 
     apiCalls
       .getUser(username)
       .then((response) => {
-        this.setState({ user: response.data });
+        this.setState({ user: response.data, isLoadingUser: false });
       })
       .catch((_) => {
-        this.setState({ userNotFound: true });
+        this.setState({ userNotFound: true, isLoadingUser: false });
       });
   };
 
@@ -38,8 +39,10 @@ class UserPage extends React.Component {
   }
 
   render() {
+    let pageContent;
+
     if (this.state.userNotFound) {
-      return (
+      pageContent = (
         <div className="alert alert-danger text-center" role="alert">
           <div className="alert-heading">
             <i className="fa-solid fa-triangle-exclamation fa-3x"></i>
@@ -47,13 +50,19 @@ class UserPage extends React.Component {
           <h5>User not found</h5>
         </div>
       );
+    } else if (this.state.isLoadingUser) {
+      pageContent = (
+        <div className="d-flex">
+          <div className="spinner-border text-black-50 m-auto" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      );
+    } else {
+      pageContent = this.state.user && <ProfileCard user={this.state.user} />;
     }
 
-    return (
-      <div data-testid="userpage">
-        {this.state.user && <ProfileCard user={this.state.user} />}
-      </div>
-    );
+    return <div data-testid="userpage">{pageContent}</div>;
   }
 }
 
