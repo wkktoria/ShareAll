@@ -3,12 +3,14 @@ package io.github.wkktoria.shareall.user;
 import io.github.wkktoria.shareall.error.ApiError;
 import io.github.wkktoria.shareall.shared.CurrentUser;
 import io.github.wkktoria.shareall.shared.GenericResponse;
+import io.github.wkktoria.shareall.user.viewmodel.UserUpdateViewModel;
 import io.github.wkktoria.shareall.user.viewmodel.UserViewModel;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,6 +43,13 @@ class UserController {
     UserViewModel getUserByUsername(@PathVariable final String username) {
         User user = userService.getByUsername(username);
         return new UserViewModel(user);
+    }
+
+    @PutMapping("/users/{id:[0-9]+}")
+    @PreAuthorize("#id == principal.id")
+    UserViewModel updateUser(@PathVariable final long id, @RequestBody(required = false) UserUpdateViewModel userUpdate) {
+        User updated = userService.update(id, userUpdate);
+        return new UserViewModel(updated);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

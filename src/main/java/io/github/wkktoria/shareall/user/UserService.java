@@ -2,6 +2,7 @@ package io.github.wkktoria.shareall.user;
 
 import io.github.wkktoria.shareall.error.NotFoundException;
 import io.github.wkktoria.shareall.user.exception.DuplicateUsernameException;
+import io.github.wkktoria.shareall.user.viewmodel.UserUpdateViewModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,5 +43,11 @@ public class UserService {
             throw new NotFoundException(username + " not found");
         }
         return inDbUser;
+    }
+
+    public User update(final long id, UserUpdateViewModel userUpdate) {
+        User inDbUser = userRepository.getOne(id);
+        inDbUser.setDisplayName(userUpdate.getDisplayName());
+        return userRepository.save(inDbUser);
     }
 }

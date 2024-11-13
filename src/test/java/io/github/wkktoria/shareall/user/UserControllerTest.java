@@ -4,6 +4,8 @@ import io.github.wkktoria.shareall.TestPage;
 import io.github.wkktoria.shareall.TestUtil;
 import io.github.wkktoria.shareall.error.ApiError;
 import io.github.wkktoria.shareall.shared.GenericResponse;
+import io.github.wkktoria.shareall.user.viewmodel.UserUpdateViewModel;
+import io.github.wkktoria.shareall.user.viewmodel.UserViewModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -408,12 +411,82 @@ class UserControllerTest {
         assertThat(Objects.requireNonNull(response.getBody()).getMessage().contains("unknown-user")).isTrue();
     }
 
+    @Test
+    void putUser_whenUnauthorizedUserSendsRequest_receiveUnauthorized() {
+        ResponseEntity<Object> response = putUser(123, null, Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void putUser_whenAuthorizedUserSendsUpdateForAnotherUser_receiveForbidden() {
+        User user = userService.save(createValidUser("user1"));
+        authenticate(user.getUsername());
+        final long anotherUserId = user.getId() + 123;
+        ResponseEntity<Object> response = putUser(anotherUserId, null, Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void putUser_whenUnauthorizedUserSendsRequest_receiveApiError() {
+        ResponseEntity<ApiError> response = putUser(123, null, ApiError.class);
+        assertThat(Objects.requireNonNull(response.getBody()).getUrl()).contains("users/123");
+    }
+
+    @Test
+    void putUser_whenAuthorizedUserSendsUpdateForAnotherUser_receiveApiError() {
+        User user = userService.save(createValidUser("user1"));
+        authenticate(user.getUsername());
+        final long anotherUserId = user.getId() + 123;
+        ResponseEntity<ApiError> response = putUser(anotherUserId, null, ApiError.class);
+        assertThat(Objects.requireNonNull(response.getBody()).getUrl()).contains("users/" + anotherUserId);
+    }
+
+    @Test
+    void putUser_whenValidRequestBodyFromAuthorizedUser_receiveOk() {
+        User user = userService.save(createValidUser("user1"));
+        authenticate(user.getUsername());
+        UserUpdateViewModel updatedUser = createValidUserUpdateViewModel();
+
+        HttpEntity<UserUpdateViewModel> requestEntity = new HttpEntity<>(updatedUser);
+        ResponseEntity<Object> response = putUser(user.getId(), requestEntity, Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void putUser_whenValidRequestBodyFromAuthorizedUser_displayNameupdated() {
+        User user = userService.save(createValidUser("user1"));
+        authenticate(user.getUsername());
+        UserUpdateViewModel updatedUser = createValidUserUpdateViewModel();
+
+        HttpEntity<UserUpdateViewModel> requestEntity = new HttpEntity<>(updatedUser);
+        putUser(user.getId(), requestEntity, Object.class);
+
+        User userInDb = userRepository.findByUsername("user1");
+        assertThat(userInDb.getDisplayName()).isEqualTo(updatedUser.getDisplayName());
+    }
+
+    @Test
+    void putUser_whenValidRequestBodyFromAuthorizedUser_receiveUserViewModelWithUpdatedDisplayName() {
+        User user = userService.save(createValidUser("user1"));
+        authenticate(user.getUsername());
+        UserUpdateViewModel updatedUser = createValidUserUpdateViewModel();
+
+        HttpEntity<UserUpdateViewModel> requestEntity = new HttpEntity<>(updatedUser);
+        ResponseEntity<UserViewModel> response = putUser(user.getId(), requestEntity, UserViewModel.class);
+        assertThat(Objects.requireNonNull(response.getBody()).getDisplayName()).isEqualTo(updatedUser.getDisplayName());
+    }
 
     private void authenticate(final String username) {
         testRestTemplate
                 .getRestTemplate()
                 .getInterceptors()
                 .add(new BasicAuthenticationInterceptor(username, "P4sW@ord"));
+    }
+
+    private UserUpdateViewModel createValidUserUpdateViewModel() {
+        UserUpdateViewModel updatedUser = new UserUpdateViewModel();
+        updatedUser.setDisplayName("newDisplayName");
+        return updatedUser;
     }
 
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
@@ -431,5 +504,10 @@ class UserControllerTest {
     public <T> ResponseEntity<T> getUser(final String username, Class<T> responseType) {
         final String path = API_1_0_USERS + "/" + username;
         return testRestTemplate.getForEntity(path, responseType);
+    }
+
+    public <T> ResponseEntity<T> putUser(final long id, HttpEntity<?> requestEntity, Class<T> responseType) {
+        final String path = API_1_0_USERS + "/" + id;
+        return testRestTemplate.exchange(path, HttpMethod.PUT, requestEntity, responseType);
     }
 }
