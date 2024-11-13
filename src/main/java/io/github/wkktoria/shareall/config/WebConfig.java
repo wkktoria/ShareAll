@@ -3,6 +3,7 @@ package io.github.wkktoria.shareall.config;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.File;
@@ -13,6 +14,12 @@ class WebConfig implements WebMvcConfigurer {
 
     WebConfig(final AppConfig appConfig) {
         this.appConfig = appConfig;
+    }
+
+    @Override
+    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:" + appConfig.getUploadPath() + "/");
     }
 
     private void createNonExistingFolder(final String path) {
