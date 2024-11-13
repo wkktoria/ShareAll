@@ -16,6 +16,7 @@ const ProfileCard = (props) => {
           width="200"
           height="200"
           image={image}
+          src={props.loadedImage}
         />
       </div>
       <div className="card-body text-center">
@@ -27,7 +28,11 @@ const ProfileCard = (props) => {
               label={`Change display name for ${username}`}
               onChange={props.onChangeDisplayName}
             />
-            <input className="form-control mt-2" type="file" />
+            <input
+              className="form-control mt-2"
+              type="file"
+              onChange={props.onFileSelect}
+            />
           </div>
         )}
         {showEditButton && (
