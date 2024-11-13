@@ -27,6 +27,7 @@ const ProfileCard = (props) => {
               label={`Change display name for ${username}`}
               onChange={props.onChangeDisplayName}
             />
+            <input className="form-control mt-2" type="file" />
           </div>
         )}
         {showEditButton && (
