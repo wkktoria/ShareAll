@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:shareall-dev
+shareall:
+  upload-path: uploads-dev

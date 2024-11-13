@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -46,8 +48,12 @@ public class UserService {
     }
 
     public User update(final long id, UserUpdateViewModel userUpdate) {
-        User inDbUser = userRepository.getOne(id);
+        User inDbUser = userRepository.getReferenceById(id);
         inDbUser.setDisplayName(userUpdate.getDisplayName());
+
+        String savedImageName = inDbUser.getUsername() + UUID.randomUUID().toString().replace("-", "");
+        inDbUser.setImage(savedImageName);
+
         return userRepository.save(inDbUser);
     }
 }

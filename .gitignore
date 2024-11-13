@@ -4,6 +4,13 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Database files ###
+**.db
+
+### Static resources ###
+uploads-test/
+uploads-prod/
+
 ### STS ###
 .apt_generated
 .classpath

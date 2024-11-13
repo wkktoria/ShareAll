@@ -7,4 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserUpdateViewModel {
     private String displayName;
+
+    private String image;
 }

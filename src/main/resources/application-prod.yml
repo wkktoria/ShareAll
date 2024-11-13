@@ -1,0 +1,12 @@
+spring:
+  h2:
+    console:
+      enabled: false
+  datasource:
+    url: jdbc:h2:file:./shareall-prod
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: update
+shareall:
+  upload-path: uploads-prod

@@ -17,7 +17,7 @@ public class ShareallApplication {
     }
 
     @Bean
-    @Profile("!test")
+    @Profile("dev")
     CommandLineRunner run(final UserService userService) {
         return args -> IntStream.rangeClosed(1, 15)
                 .mapToObj(i -> {
