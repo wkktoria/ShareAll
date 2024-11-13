@@ -2,11 +2,13 @@ package io.github.wkktoria.shareall.user;
 
 import io.github.wkktoria.shareall.TestPage;
 import io.github.wkktoria.shareall.TestUtil;
+import io.github.wkktoria.shareall.config.AppConfig;
 import io.github.wkktoria.shareall.error.ApiError;
 import io.github.wkktoria.shareall.shared.GenericResponse;
 import io.github.wkktoria.shareall.user.viewmodel.UserUpdateViewModel;
 import io.github.wkktoria.shareall.user.viewmodel.UserViewModel;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,7 @@ import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -49,10 +52,19 @@ class UserControllerTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AppConfig appConfig;
+
     @BeforeEach
     void cleanup() {
         userRepository.deleteAll();
         testRestTemplate.getRestTemplate().getInterceptors().clear();
+    }
+
+    @AfterEach
+    void cleanDirectory() throws IOException {
+        FileUtils.cleanDirectory(new File(appConfig.getFullProfileImagesPath()));
+        FileUtils.cleanDirectory(new File(appConfig.getFullAttachmentsPath()));
     }
 
     @Test
@@ -485,16 +497,34 @@ class UserControllerTest {
         User user = userService.save(createValidUser("user1"));
         authenticate(user.getUsername());
 
-        ClassPathResource imageResource = new ClassPathResource("profile.png");
-        UserUpdateViewModel updatedUser = createValidUserUpdateViewModel();
+        final String imageString = readFileToBase64("profile.png");
 
-        byte[] imageArray = FileUtils.readFileToByteArray(imageResource.getFile());
-        String imageString = Base64.getEncoder().encodeToString(imageArray);
+        UserUpdateViewModel updatedUser = createValidUserUpdateViewModel();
         updatedUser.setImage(imageString);
 
         HttpEntity<UserUpdateViewModel> requestEntity = new HttpEntity<>(updatedUser);
         ResponseEntity<UserViewModel> response = putUser(user.getId(), requestEntity, UserViewModel.class);
         assertThat(Objects.requireNonNull(response.getBody()).getImage()).isNotEqualTo("profile-image.png");
+    }
+
+    @Test
+    void putUser_withValidRequestBodyWithSupportedImageFromAuthorizedUser_imageIsStoredUnderProfileFolder() throws IOException {
+        User user = userService.save(createValidUser("user1"));
+        authenticate(user.getUsername());
+
+        final String imageString = readFileToBase64("profile.png");
+
+        UserUpdateViewModel updatedUser = createValidUserUpdateViewModel();
+        updatedUser.setImage(imageString);
+
+        HttpEntity<UserUpdateViewModel> requestEntity = new HttpEntity<>(updatedUser);
+        ResponseEntity<UserViewModel> response = putUser(user.getId(), requestEntity, UserViewModel.class);
+
+        final String storedImageName = Objects.requireNonNull(response.getBody()).getImage();
+        final String profilePicturePath = appConfig.getFullProfileImagesPath() + "/" + storedImageName;
+
+        File storedImage = new File(profilePicturePath);
+        assertThat(storedImage.exists()).isTrue();
     }
 
     private void authenticate(final String username) {
@@ -508,6 +538,12 @@ class UserControllerTest {
         UserUpdateViewModel updatedUser = new UserUpdateViewModel();
         updatedUser.setDisplayName("newDisplayName");
         return updatedUser;
+    }
+
+    private String readFileToBase64(final String filename) throws IOException {
+        ClassPathResource imageResource = new ClassPathResource(filename);
+        byte[] imageArray = FileUtils.readFileToByteArray(imageResource.getFile());
+        return Base64.getEncoder().encodeToString(imageArray);
     }
 
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
