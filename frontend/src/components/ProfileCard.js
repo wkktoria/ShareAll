@@ -27,6 +27,8 @@ const ProfileCard = (props) => {
               value={displayName}
               label={`Change display name for ${username}`}
               onChange={props.onChangeDisplayName}
+              hasError={props.errors.displayName && true}
+              error={props.errors.displayName}
             />
             <input
               className="form-control mt-2"
@@ -68,6 +70,10 @@ const ProfileCard = (props) => {
       </div>
     </div>
   );
+};
+
+ProfileCard.defaultProps = {
+  errors: {},
 };
 
 export default ProfileCard;

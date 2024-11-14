@@ -34,7 +34,12 @@ const mockSuccessUpdateUser = {
 
 const mockFailUpdateUser = {
   response: {
-    data: {},
+    data: {
+      validationErrors: {
+        displayName: "It must have minimum 4 and maximum 255 characters",
+        image: "Only PNG and JPG files are allowed",
+      },
+    },
   },
 };
 
@@ -418,6 +423,19 @@ describe("UserPage", () => {
 
       const image = container.querySelector("img");
       expect(image.src).toContain("/images/profile/profile1-update.png");
+    });
+
+    it("displays validation error for displayName when update api fails", async () => {
+      const { queryByRole, findByText } = await setupForEdit();
+      apiCalls.updateUser = jest.fn().mockRejectedValue(mockFailUpdateUser);
+
+      const saveButton = queryByRole("button", { name: "Save" });
+      fireEvent.click(saveButton);
+
+      const errorMessage = await findByText(
+        "It must have minimum 4 and maximum 255 characters"
+      );
+      expect(errorMessage).toBeInTheDocument();
     });
   });
 });
