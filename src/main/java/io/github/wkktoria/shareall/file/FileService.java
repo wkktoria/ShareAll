@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -32,5 +34,13 @@ public class FileService {
 
     public String detectType(byte[] fileArray) {
         return tika.detect(fileArray);
+    }
+
+    public void deleteProfileImage(String image) {
+        try {
+            Files.deleteIfExists(Paths.get(appConfig.getFullProfileImagesPath() + "/" + image));
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }
