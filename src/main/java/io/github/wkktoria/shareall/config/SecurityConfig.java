@@ -27,6 +27,7 @@ class SecurityConfig {
         http.authorizeHttpRequests((authentication) -> authentication
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/1.0/login")).authenticated()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/1.0/users/{id:[0-9]+}")).authenticated()
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/1.0/posts")).authenticated()
                 .anyRequest().permitAll()
         );
 

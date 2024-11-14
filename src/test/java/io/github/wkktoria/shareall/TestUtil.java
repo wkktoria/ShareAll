@@ -1,5 +1,6 @@
 package io.github.wkktoria.shareall;
 
+import io.github.wkktoria.shareall.post.Post;
 import io.github.wkktoria.shareall.user.User;
 
 public class TestUtil {
@@ -17,5 +18,11 @@ public class TestUtil {
         User user = createValidUser();
         user.setUsername(username);
         return user;
+    }
+
+    public static Post createValidPost() {
+        Post post = new Post();
+        post.setContent("Test content for the test post");
+        return post;
     }
 }
