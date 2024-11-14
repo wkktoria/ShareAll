@@ -1,8 +1,8 @@
 package io.github.wkktoria.shareall.user;
 
 import io.github.wkktoria.shareall.error.ApiError;
-import io.github.wkktoria.shareall.shared.CurrentUser;
 import io.github.wkktoria.shareall.shared.GenericResponse;
+import io.github.wkktoria.shareall.shared.annotation.CurrentUser;
 import io.github.wkktoria.shareall.user.viewmodel.UserUpdateViewModel;
 import io.github.wkktoria.shareall.user.viewmodel.UserViewModel;
 import jakarta.servlet.http.HttpServletRequest;

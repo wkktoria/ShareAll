@@ -2,6 +2,7 @@ package io.github.wkktoria.shareall.file;
 
 import io.github.wkktoria.shareall.config.AppConfig;
 import org.apache.commons.io.FileUtils;
+import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -12,9 +13,11 @@ import java.util.UUID;
 @Service
 public class FileService {
     private final AppConfig appConfig;
+    private final Tika tika;
 
     public FileService(final AppConfig appConfig) {
         this.appConfig = appConfig;
+        this.tika = new Tika();
     }
 
     public String saveProfileImage(final String base64Image) throws IOException {
@@ -25,5 +28,9 @@ public class FileService {
         FileUtils.writeByteArrayToFile(target, decodedBytes);
 
         return imageName;
+    }
+
+    public String detectType(byte[] fileArray) {
+        return tika.detect(fileArray);
     }
 }

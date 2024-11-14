@@ -1,6 +1,6 @@
 package io.github.wkktoria.shareall.user.login;
 
-import io.github.wkktoria.shareall.shared.CurrentUser;
+import io.github.wkktoria.shareall.shared.annotation.CurrentUser;
 import io.github.wkktoria.shareall.user.User;
 import io.github.wkktoria.shareall.user.viewmodel.UserViewModel;
 import org.springframework.web.bind.annotation.PostMapping;

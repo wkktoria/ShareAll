@@ -1,4 +1,4 @@
-package io.github.wkktoria.shareall.shared;
+package io.github.wkktoria.shareall.shared.annotation;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 

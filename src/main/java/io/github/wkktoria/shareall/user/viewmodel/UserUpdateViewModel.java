@@ -1,5 +1,6 @@
 package io.github.wkktoria.shareall.user.viewmodel;
 
+import io.github.wkktoria.shareall.shared.annotation.ProfileImage;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -12,5 +13,6 @@ public class UserUpdateViewModel {
     @Size(min = 4, max = 255)
     private String displayName;
 
+    @ProfileImage
     private String image;
 }
