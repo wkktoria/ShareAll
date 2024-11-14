@@ -60,8 +60,10 @@ beforeEach(() => {
   delete axios.defaults.headers.common["Authorization"];
 });
 
+let store;
+
 const setup = (props) => {
-  const store = configureStore(false);
+  store = configureStore(false);
   return render(
     <Provider store={store}>
       <UserPage {...props} />
@@ -513,6 +515,46 @@ describe("UserPage", () => {
         "It must have minimum 4 and maximum 255 characters"
       );
       expect(errorMessage).not.toBeInTheDocument();
+    });
+
+    it("updates redux state after updateUser api call success", async () => {
+      const { queryByRole, container } = await setupForEdit();
+      let displayNameInput = container.querySelector("input");
+      fireEvent.change(displayNameInput, {
+        target: { value: "display1-update" },
+      });
+      apiCalls.updateUser = jest.fn().mockResolvedValue(mockSuccessUpdateUser);
+
+      const saveButton = queryByRole("button", { name: "Save" });
+      fireEvent.click(saveButton);
+
+      await waitForElementToBeRemoved(saveButton);
+
+      const storedUserData = store.getState();
+      expect(storedUserData.displayName).toBe(
+        mockSuccessUpdateUser.data.displayName
+      );
+      expect(storedUserData.image).toBe(mockSuccessUpdateUser.data.image);
+    });
+
+    it("updates local storage after updateUser api call success", async () => {
+      const { queryByRole, container } = await setupForEdit();
+      let displayNameInput = container.querySelector("input");
+      fireEvent.change(displayNameInput, {
+        target: { value: "display1-update" },
+      });
+      apiCalls.updateUser = jest.fn().mockResolvedValue(mockSuccessUpdateUser);
+
+      const saveButton = queryByRole("button", { name: "Save" });
+      fireEvent.click(saveButton);
+
+      await waitForElementToBeRemoved(saveButton);
+
+      const storedUserData = JSON.parse(localStorage.getItem("shareall-auth"));
+      expect(storedUserData.displayName).toBe(
+        mockSuccessUpdateUser.data.displayName
+      );
+      expect(storedUserData.image).toBe(mockSuccessUpdateUser.data.image);
     });
   });
 });
