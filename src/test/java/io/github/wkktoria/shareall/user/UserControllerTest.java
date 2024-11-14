@@ -527,6 +527,42 @@ class UserControllerTest {
         assertThat(storedImage.exists()).isTrue();
     }
 
+    @Test
+    void putUser_withInvalidRequestBodyWithNullDisplayNameFromAuthorizedUser_receiveBadRequest() {
+        User user = userService.save(createValidUser("user1"));
+        authenticate(user.getUsername());
+        UserUpdateViewModel updatedUser = new UserUpdateViewModel();
+
+        HttpEntity<UserUpdateViewModel> requestEntity = new HttpEntity<>(updatedUser);
+        ResponseEntity<Object> response = putUser(user.getId(), requestEntity, Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void putUser_withInvalidRequestBodyWithLessThanMinSizeForDisplayNameFromAuthorizedUser_receiveBadRequest() {
+        User user = userService.save(createValidUser("user1"));
+        authenticate(user.getUsername());
+        UserUpdateViewModel updatedUser = new UserUpdateViewModel();
+        updatedUser.setDisplayName("abc");
+
+        HttpEntity<UserUpdateViewModel> requestEntity = new HttpEntity<>(updatedUser);
+        ResponseEntity<Object> response = putUser(user.getId(), requestEntity, Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void putUser_withInvalidRequestBodyWithMoreThanMaxSizeForDisplayNameFromAuthorizedUser_receiveBadRequest() {
+        User user = userService.save(createValidUser("user1"));
+        authenticate(user.getUsername());
+        UserUpdateViewModel updatedUser = new UserUpdateViewModel();
+        final String valueOf256Chars = IntStream.rangeClosed(1, 256).mapToObj(n -> "a").collect(Collectors.joining());
+        updatedUser.setDisplayName(valueOf256Chars);
+
+        HttpEntity<UserUpdateViewModel> requestEntity = new HttpEntity<>(updatedUser);
+        ResponseEntity<Object> response = putUser(user.getId(), requestEntity, Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
     private void authenticate(final String username) {
         testRestTemplate
                 .getRestTemplate()

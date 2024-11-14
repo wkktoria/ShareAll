@@ -47,7 +47,7 @@ class UserController {
 
     @PutMapping("/users/{id:[0-9]+}")
     @PreAuthorize("#id == principal.id")
-    UserViewModel updateUser(@PathVariable final long id, @RequestBody(required = false) UserUpdateViewModel userUpdate) {
+    UserViewModel updateUser(@PathVariable final long id, @Valid @RequestBody(required = false) UserUpdateViewModel userUpdate) {
         User updated = userService.update(id, userUpdate);
         return new UserViewModel(updated);
     }
