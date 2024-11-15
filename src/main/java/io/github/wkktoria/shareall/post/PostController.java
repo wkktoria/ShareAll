@@ -5,17 +5,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/1.0")
 class PostController {
-    private final PostService postService;
+	private final PostService postService;
 
-    PostController(final PostService postService) {
-        this.postService = postService;
-    }
+	PostController(final PostService postService) {
+		this.postService = postService;
+	}
 
-    @PostMapping("/posts")
-    void createPost(@RequestBody final Post post) {
-        postService.save(post);
-    }
+	@PostMapping("/posts")
+	void createPost(@Valid @RequestBody final Post post) {
+		postService.save(post);
+	}
+
 }
