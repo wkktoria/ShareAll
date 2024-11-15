@@ -2,10 +2,12 @@ package io.github.wkktoria.shareall.post;
 
 import java.util.Date;
 
+import io.github.wkktoria.shareall.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
@@ -36,4 +38,7 @@ public class Post {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
+	
+	@ManyToOne
+	private User user;
 }

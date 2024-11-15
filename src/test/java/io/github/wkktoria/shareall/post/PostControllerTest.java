@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import io.github.wkktoria.shareall.error.ApiError;
+import io.github.wkktoria.shareall.user.User;
 import io.github.wkktoria.shareall.user.UserRepository;
 import io.github.wkktoria.shareall.user.UserService;
 
@@ -48,6 +50,11 @@ class PostControllerTest {
 		userRepository.deleteAll();
 		postRepository.deleteAll();
 		testRestTemplate.getRestTemplate().getInterceptors().clear();
+	}
+
+	@AfterEach
+	void cleanupAfter() {
+		postRepository.deleteAll();
 	}
 
 	@Test
@@ -160,6 +167,30 @@ class PostControllerTest {
 		ResponseEntity<ApiError> response = postPost(post, ApiError.class);
 		Map<String, String> validationErrors = response.getBody().getValidationErrors();
 		assertThat(validationErrors.get("content")).isNotNull();
+	}
+
+	@Test
+	void createPost_whenPostIsValidAndUserIsAuthorized_postSavedWithAuthenticatedUserInfo() {
+		userService.save(createValidUser("user1"));
+		authenticate("user1");
+
+		Post post = createValidPost();
+		postPost(post, Object.class);
+
+		Post inDbPost = postRepository.findAll().getFirst();
+		assertThat(inDbPost.getUser().getUsername()).isEqualTo("user1");
+	}
+
+	@Test
+	void createPost_whenPostIsValidAndUserIsAuthorized_postCanBeAccessedFromUserEntity() {
+		userService.save(createValidUser("user1"));
+		authenticate("user1");
+
+		Post post = createValidPost();
+		postPost(post, Object.class);
+
+		User inDbUser = userRepository.findByUsername("user1");
+		assertThat(inDbUser.getPosts().size()).isEqualTo(1);
 	}
 
 	private <T> ResponseEntity<T> postPost(final Post post, Class<T> responseType) {

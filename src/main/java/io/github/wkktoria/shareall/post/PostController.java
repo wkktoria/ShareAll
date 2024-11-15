@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.wkktoria.shareall.shared.annotation.CurrentUser;
+import io.github.wkktoria.shareall.user.User;
 import jakarta.validation.Valid;
 
 @RestController
@@ -17,8 +19,8 @@ class PostController {
 	}
 
 	@PostMapping("/posts")
-	void createPost(@Valid @RequestBody final Post post) {
-		postService.save(post);
+	void createPost(@Valid @RequestBody Post post, @CurrentUser User user) {
+		postService.save(user, post);
 	}
 
 }

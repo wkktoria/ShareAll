@@ -1,8 +1,10 @@
 package io.github.wkktoria.shareall.post;
 
+import java.util.Date;
+
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import io.github.wkktoria.shareall.user.User;
 
 @Service
 public class PostService {
@@ -12,8 +14,9 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public void save(final Post post) {
+    public void save(User user, Post post) {
         post.setTimestamp(new Date());
+        post.setUser(user);
         postRepository.save(post);
     }
 }

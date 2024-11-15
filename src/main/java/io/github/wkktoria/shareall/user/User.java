@@ -1,16 +1,29 @@
 package io.github.wkktoria.shareall.user;
 
-import io.github.wkktoria.shareall.user.annotation.UniqueUsername;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
+import io.github.wkktoria.shareall.post.Post;
+import io.github.wkktoria.shareall.user.annotation.UniqueUsername;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "users")
@@ -41,6 +54,9 @@ public class User implements UserDetails {
     private String password;
 
     private String image;
+    
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<Post> posts;
 
     @Override
     @Transient
